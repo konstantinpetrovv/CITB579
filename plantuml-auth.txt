@@ -1,0 +1,39 @@
+@startuml
+participant Frontend as FE
+participant Backend as BE
+participant DB
+
+== 1. Register ==
+autonumber 1
+FE -> BE: POST /api/register
+BE -> BE: validate fields/check if user already exists
+alt fields are valid
+BE -> DB: store the user in the db
+BE -> FE: return successful response
+else fields are not valid
+BE -> FE: return 400 bad request
+end
+
+
+== 2. login ==
+autonumber 1
+FE -> BE: POST /api/login
+BE -> DB: check if the email and the password are valid
+alt the user and password can be found in the db
+BE -> BE: Generate JWT token
+BE -> FE: Return JWT token
+else the user and password can't be found in the db
+BE -> FE: Return status code 400
+end
+
+== 3. check auth token ==
+autonumber 1
+FE -> BE: POST /api/auth send JWT token
+BE -> BE: validate JWT token
+BE -> DB: check user
+alt token is valid
+BE -> FE: 200 success
+else token is invalid
+BE -> FE: 401 unauthorized
+end
+@enduml
